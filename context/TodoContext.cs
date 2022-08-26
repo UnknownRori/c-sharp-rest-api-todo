@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace c_sharp_rest_api_todo.Context
 {
-    class TodoDb : DbContext
+    public class TodoContext : DbContext
     {
-        public TodoDb(DbContextOptions<TodoDb> options)
+        public TodoContext(DbContextOptions<TodoContext> options)
         : base(options) { }
 
         public DbSet<Todo> Todos => Set<Todo>();
