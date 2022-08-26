@@ -42,4 +42,18 @@ public class TodoController : ControllerBase
 
         return CreatedAtAction(nameof(Get), new { id = todoItem.Id }, todoItem);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<Boolean>> Delete(int id)
+    {
+        Todo? todo = await this._context.Todos.FindAsync(id);
+
+        if (todo == null)
+            return NotFound();
+
+        this._context.Todos.Remove(todo);
+        await this._context.SaveChangesAsync();
+
+        return Ok(true);
+    }
 }
