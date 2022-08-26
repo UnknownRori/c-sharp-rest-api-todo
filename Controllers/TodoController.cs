@@ -56,4 +56,20 @@ public class TodoController : ControllerBase
 
         return Ok(true);
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Todo>> Update(int id, [Bind("Title,isComplete")] Todo todoItem)
+    {
+        Todo? todo = await this._context.Todos.FindAsync(id);
+        if (todo == null)
+            return NotFound();
+
+        todo.isComplete = todoItem.isComplete;
+        todo.Title = todoItem.Title;
+
+        this._context.Update(todo);
+        await this._context.SaveChangesAsync();
+
+        return Ok(todo);
+    }
 }
