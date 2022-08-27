@@ -1,19 +1,19 @@
-FROM mcr.microsoft.com/donet/aspnet:6.0-focal AS BASE
-
+# syntax=docker/dockerfile:1
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
 
-EXPOSE 80
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
+RUN dotnet restore
 
-COPY "c-sharp-rest-api-todo.csproj" "./"
-
-RUN dotnet restore "./c-sharp-rest-api-todo.csproj"
-
+# Copy everything else and build
 COPY . .
+RUN dotnet publish -c Release -o out
 
-RUN dotnet build
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+WORKDIR /app
+COPY --from=build-env /app/out .
+EXPOSE 80
+CMD ["dotnet", "c-sharp-rest-api-todo.dll"]
 
-RUN dotnet publish
-
-WORKDIR /app/bin/Debug/net6.0/publish
-
-CMD ["dotnet", "./c-sharp-rest-api-todo.dll"]
